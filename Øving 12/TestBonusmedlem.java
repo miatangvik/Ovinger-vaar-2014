@@ -33,27 +33,13 @@ class BonusMedlem {
 		return poeng;
 	}
 	
-	/**
-	 * finnKvalPoeng() returnerer antall poeng som kan kvalifisere til oppgradering av medlemskapet til sølv eller gull.
-	 * Dersom innmeldingsdatoen ligger mindre enn 365 dager bak i tid i forhold til datoen som sendes inn som argument,
-	 * returneres antall poeng. Hvis det er mer enn ett år siden kunden meldte seg inn, returneres 0 poeng.
-	 */
-	
 	public int finnKvalPoeng(Dato idag) {
 		return (innmeldtDato.dagerForskjell(idag) > 365) ? 0 : poeng;
 	}
 	
-	/**
-	 * okPassord() tar et passord som argument, og returnerer true dersom det er ok.
-	 */
-	
 	public boolean okPassord(String passord) {
 		return pers.okPassord(passord);
 	}
-	
-	/**
-	 * registrerPoeng() tar antall poeng som argument og registrerer disse i henhold til reglene foran.
-	 */
 	
 	public void registrerPoeng(int poeng) {
 		this.poeng += poeng;
