@@ -1,0 +1,55 @@
+/**
+ * Borettslag
+ *
+ * Øving 7, vår 2014
+ */
+
+CREATE TABLE borettslag
+(
+	navn VARCHAR(30) NOT NULL,
+	adresse VARCHAR(30),
+	etableringsar INTEGER,
+	CONSTRAINT borettslag_pk PRIMARY KEY (navn)
+);
+
+CREATE TABLE bygninger
+(
+	adresse VARCHAR(30) NOT NULL,
+	navn VARCHAR(30),
+	CONSTRAINT bygninger_pk PRIMARY KEY (adresse)
+);
+
+CREATE TABLE leiligheter
+(
+	antall_rom INTEGER,
+	antall_m2 INTEGER,
+	etasje INTEGER,
+	leilighetsnummer INTEGER,
+	adresse VARCHAR(30),
+	CONSTRAINT leiligheter_pk PRIMARY KEY (leilighetsnummer)
+);
+
+CREATE TABLE andelseiere
+(
+	navn VARCHAR(30),
+	medlemsnummer INTEGER,
+	leilighetsnummer INTEGER,
+	CONSTRAINT andelseiere_pk PRIMARY KEY (medlemsnummer)
+);
+
+ALTER TABLE bygninger
+	ADD CONSTRAINT bygninger_fk FOREIGN KEY (navn)
+		REFERENCES borettslag (navn);
+
+ALTER TABLE leiligheter
+	ADD CONSTRAINT leiligheter_fk FOREIGN KEY (adresse)
+		REFERENCES bygninger (adresse);
+
+ALTER TABLE andelseiere
+	ADD CONSTRAINT andelseiere_fk FOREIGN KEY (leilighetsnummer)
+		REFERENCES leiligheter (leilighetsnummer);
+
+INSERT INTO borettslag VALUES('Tangerudbakken borettslag', 'Fugleveien 4', 1990);
+INSERT INTO bygninger VALUES('Fugleveien 4a', 'Tangerudbakken borettslag');
+INSERT INTO leiligheter VALUES(4, 20, 1, 1, 'Fugleveien 4a');
+INSERT INTO andelseiere VALUES('Mia Tangvik', 1, 1);
