@@ -4,18 +4,14 @@
  * Øving 12, vår 2014
  */
 
+import java.util.ArrayList;
 import java.util.Random;
 
 class Medlemsarkiv {
 	private ArrayList<BonusMedlem> medlemmer = new ArrayList<BonusMedlem>();
 	
-	/**
-	 * finnPoeng() skal ta medlemsnummer og passord som argument og returnere antall poeng denne kunden har spart opp.
-	 * Returner en negativ verdi hvis medlem med dette nr ikke fins, eller passord er ugyldig.
-	 */
-	
 	public int finnPoeng(int medlNr, String passord) {
-		if (!sjekkMedlem(medlNr)) {
+		if (!sjekkMedlemsEksistens(medlNr)) {
 			return -1;
 		}
 		for (int i = 0; i < medlemmer.size(); i++) {
@@ -25,16 +21,10 @@ class Medlemsarkiv {
 		}
 		int indeks = finnMedlemsIndeks(medlNr);
 		return medlemmer.get(indeks).getPoeng();
-		/*for (int i = 0; i < medlemmer.size(); i++) {
-			if (medlemmer.get(i).getMedlnr().equals(medlNr)) {
-				return medlemmer.get(i).getPoeng();
-			}
-		}
-		return -1;*/
 	}
 	
 	public boolean registrerPoeng(int medlNr, int poeng) {
-		if (!sjekkMedlem(medlNr)) {
+		if (!sjekkMedlemsEksistens(medlNr)) {
 			return false;
 		}
 		int indeks = finnMedlemsIndeks(medlNr);
@@ -43,18 +33,61 @@ class Medlemsarkiv {
 	}
 	
 	public int nyMedlem(Personalia pers, Dato innmeldt) {
-		Personalia person = new Personalia("", "", "", ""); // String fornavn, String etternavn, String ePostadr, String passord
-		BasicMedlem medlem = new BasicMedlem(finnLedigNr(), person, new Dato("08041994"));
+		BasicMedlem medlem = new BasicMedlem(finnLedigNr(), pers, innmeldt);
 		medlemmer.add(medlem);
+		return medlem.getMedlnr();
+	}
+	
+	public boolean sjekkMedlemmer() {
+		for (int i = 0; i < medlemmer.size(); i++) {
+			if (medlemmer.get(i) instanceof BasicMedlem && medlemmer.get(i).getPoeng() >= 25000 && medlemmer.get(i).getPoeng() < 75000) {
+				int medlNr = medlemmer.get(i).getMedlnr();
+				Personalia pers = medlemmer.get(i).getPersonalia();
+				Dato innmeldtDato = medlemmer.get(i).getInnmeldt();
+				int poeng = medlemmer.get(i).getPoeng();
+				SoelvMedlem soelvMedlem = new SoelvMedlem(medlNr, pers, innmeldtDato, poeng);
+				medlemmer.set(i, soelvMedlem);
+			} else if (medlemmer.get(i) instanceof BasicMedlem && medlemmer.get(i).getPoeng() >= 75000) {
+				int medlNr = medlemmer.get(i).getMedlnr();
+				Personalia pers = medlemmer.get(i).getPersonalia();
+				Dato innmeldtDato = medlemmer.get(i).getInnmeldt();
+				int poeng = medlemmer.get(i).getPoeng();
+				GullMedlem gullMedlem = new GullMedlem(medlNr, pers, innmeldtDato, poeng);
+				medlemmer.set(i, gullMedlem);
+			} else if (medlemmer.get(i) instanceof SoelvMedlem && medlemmer.get(i).getPoeng() >= 75000) {
+				int medlNr = medlemmer.get(i).getMedlnr();
+				Personalia pers = medlemmer.get(i).getPersonalia();
+				Dato innmeldtDato = medlemmer.get(i).getInnmeldt();
+				int poeng = medlemmer.get(i).getPoeng();
+				GullMedlem gullMedlem = new GullMedlem(medlNr, pers, innmeldtDato, poeng);
+				medlemmer.set(i, gullMedlem);
+			}
+		}
+		return true;
+	}
+	
+	public int finnMedlnrGittIndeks(int indeks) {
+		return medlemmer.get(indeks).getMedlnr();
+	}
+	
+	public String finnKlasseGittIndeks(int indeks) {
+		return medlemmer.get(indeks).getClass().getName();
 	}
 	
 	private int finnLedigNr() {
-		
+		Random randomTall = new Random();
+		int medlNrTest = randomTall.nextInt(1000);
+		for (int i = 0; i < medlemmer.size(); i++) {
+			if (medlemmer.get(i).getMedlnr() == medlNrTest) {
+				medlNrTest = randomTall.nextInt(1000);
+			}
+		}
+		return medlNrTest;
 	}
 	
-	private boolean sjekkMedlem(int medlNr) {
+	private boolean sjekkMedlemsEksistens(int medlNr) {
 		for (int i = 0; i < medlemmer.size(); i++) {
-			if (medlemmer.get(i).getMedlnr().equals(medlNr)) {
+			if (medlemmer.get(i).getMedlnr() == medlNr) {
 				return true;
 			}
 		}
@@ -63,7 +96,7 @@ class Medlemsarkiv {
 	
 	private int finnMedlemsIndeks(int medlNr) {
 		for (int i = 0; i < medlemmer.size(); i++) {
-			if (medlemmer.get(i).getMedlnr().equals(medlNr)) {
+			if (medlemmer.get(i).getMedlnr() == medlNr) {
 				return i;
 			}
 		}
